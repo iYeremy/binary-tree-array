@@ -313,6 +313,10 @@ bool ArbolBinarioArreglo<T>::eliminar(const T& clave,
     }
     // dos hijos
     else {
+        int nodoEliminar = pos;
+        int hijoIzq = arbol[pos].izq;
+        int hijoDer = arbol[pos].der;
+
         int p_suc = pos;
         int suc = arbol[pos].der;
 
@@ -321,15 +325,24 @@ bool ArbolBinarioArreglo<T>::eliminar(const T& clave,
             suc = arbol[suc].izq;
         }
 
-        arbol[pos].clave = arbol[suc].clave;
-        arbol[pos].id_info = arbol[suc].id_info;
+        int hijoDerechoSuc = arbol[suc].der;
 
-        if (arbol[p_suc].izq == suc)
-            arbol[p_suc].izq = arbol[suc].der;
+        if (p_suc == pos)
+            arbol[pos].der = hijoDerechoSuc;
         else
-            arbol[p_suc].der = arbol[suc].der;
+            arbol[p_suc].izq = hijoDerechoSuc;
 
-        pos = suc;
+        if (padre == 0)
+            arbol[0].izq = suc;
+        else if (arbol[padre].izq == nodoEliminar)
+            arbol[padre].izq = suc;
+        else
+            arbol[padre].der = suc;
+
+        arbol[suc].izq = hijoIzq;
+        arbol[suc].der = (p_suc == pos) ? arbol[pos].der : hijoDer;
+
+        pos = nodoEliminar;
     }
 
     arbol[pos].usado = false;

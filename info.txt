@@ -1,6 +1,6 @@
-1|1|Nombre: adasd | Apellido: dsfsdf
-2|0|Nombre: fdgfhfg | Apellido: vcbb
-3|0|Nombre: fgfdgdf | Apellido: bnvbnv
-4|0|Nombre: bdffdnb | Apellido: hgjghjhg
-5|1|Nombre: fdhfghgf | Apellido: bnbvnm
-6|1|Nombre: mhgmghm | Apellido: yutyu
+1|0|Nombre: root | Apellido: root
+2|1|Nombre: left | Apellido: node
+3|1|Nombre: right | Apellido: node
+4|0|Nombre: succ | Apellido: node
+5|1|Nombre: big | Apellido: node
+6|1|Nombre: dsfdsg | Apellido: dbfdbd

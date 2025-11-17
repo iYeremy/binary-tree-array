@@ -16,6 +16,31 @@ bool convertirCodigo(const string& entrada, long long& codigo)
     return true;
 }
 
+bool leerCodigo(const string& prompt, long long& codigo)
+{
+    string texto;
+    cout << prompt;
+    cin >> texto;
+    cin.ignore(10000, '\n');
+
+    if (!convertirCodigo(texto, codigo)) {
+        cout << "Codigo invalido. Solo digitos.\n";
+        return false;
+    }
+    return true;
+}
+
+string capturarInfo(const string& etiquetaNombre,
+                    const string& etiquetaApellido)
+{
+    string nombre, apellido;
+    cout << etiquetaNombre;
+    getline(cin, nombre);
+    cout << etiquetaApellido;
+    getline(cin, apellido);
+    return "Nombre: " + nombre + " | Apellido: " + apellido;
+}
+
 void imprimirCola(Cola<ParRecorrido<long long>>* c)
 {
     while (c && !c->ColaVacia()) {
@@ -71,15 +96,8 @@ int main()
         }
 
         cin.ignore(10000, '\n');
-        string nombre;
-        cout << "Ingrese nombre: ";
-        getline(cin, nombre);
-
-        string apellido;
-        cout << "Ingrese apellido: ";
-        getline(cin, apellido);
-
-        string info = "Nombre: " + nombre + " | Apellido: " + apellido;
+        string info = capturarInfo("Ingrese nombre: ",
+                                   "Ingrese apellido: ");
 
         if (arbol.insertar(codigo, info))
             cout << "Insertado correctamente.\n";
@@ -114,16 +132,8 @@ int main()
         cin.ignore(10000, '\n');
 
         if (op == 1) {
-            string codigoTxt;
-            cout << "Codigo a buscar: ";
-            cin >> codigoTxt;
-            cin.ignore(10000, '\n');
-
             long long codigo;
-            if (!convertirCodigo(codigoTxt, codigo)) {
-                cout << "Codigo invalido.\n";
-                continue;
-            }
+            if (!leerCodigo("Codigo a buscar: ", codigo)) continue;
 
             string info;
             if (arbol.buscar(codigo, info))
@@ -132,24 +142,11 @@ int main()
                 cout << "No existe ese codigo.\n";
         }
         else if (op == 2) {
-            string codigoTxt;
-            cout << "Codigo a modificar: ";
-            cin >> codigoTxt;
-            cin.ignore(10000, '\n');
-
             long long codigo;
-            if (!convertirCodigo(codigoTxt, codigo)) {
-                cout << "Codigo invalido.\n";
-                continue;
-            }
+            if (!leerCodigo("Codigo a modificar: ", codigo)) continue;
 
-            string nombre, apellido;
-            cout << "Nuevo nombre: ";
-            getline(cin, nombre);
-            cout << "Nuevo apellido: ";
-            getline(cin, apellido);
-
-            string nuevaInfo = "Nombre: " + nombre + " | Apellido: " + apellido;
+            string nuevaInfo = capturarInfo("Nuevo nombre: ",
+                                            "Nuevo apellido: ");
 
             if (arbol.modificar(codigo, nuevaInfo))
                 cout << "Informacion actualizada correctamente.\n";
@@ -157,16 +154,8 @@ int main()
                 cout << "No se pudo modificar: codigo inexistente.\n";
         }
         else if (op == 3) {
-            string codigoTxt;
-            cout << "Codigo a eliminar: ";
-            cin >> codigoTxt;
-            cin.ignore(10000, '\n');
-
             long long codigo;
-            if (!convertirCodigo(codigoTxt, codigo)) {
-                cout << "Codigo invalido.\n";
-                continue;
-            }
+            if (!leerCodigo("Codigo a eliminar: ", codigo)) continue;
 
             string infoEliminada;
             if (arbol.eliminar(codigo, infoEliminada))
@@ -175,24 +164,11 @@ int main()
                 cout << "No existe ese codigo.\n";
         }
         else if (op == 4) {
-            string codigoTxt;
-            cout << "Ingrese codigo: ";
-            cin >> codigoTxt;
-            cin.ignore(10000, '\n');
-
             long long codigo;
-            if (!convertirCodigo(codigoTxt, codigo)) {
-                cout << "Codigo invalido.\n";
-                continue;
-            }
+            if (!leerCodigo("Ingrese codigo: ", codigo)) continue;
 
-            string nombre, apellido;
-            cout << "Ingrese nombre: ";
-            getline(cin, nombre);
-            cout << "Ingrese apellido: ";
-            getline(cin, apellido);
-
-            string info = "Nombre: " + nombre + " | Apellido: " + apellido;
+            string info = capturarInfo("Ingrese nombre: ",
+                                       "Ingrese apellido: ");
 
             if (arbol.insertar(codigo, info))
                 cout << "Insertado correctamente.\n";
