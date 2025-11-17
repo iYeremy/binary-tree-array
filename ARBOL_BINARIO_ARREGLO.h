@@ -21,8 +21,6 @@ struct ParRecorrido {
 
 template <typename T>
 class ArbolBinarioArreglo {
-
-private:
     nodo<T>* arbol;
     int capacidad;
     int raiz;
@@ -33,14 +31,14 @@ private:
 
     int buscar_nodo(const T& clave, int* padre);
     int buscarPosLibre() const;
+    bool leerLineasInfo(std::string*& lines, int& n);
+    bool actualizarRegistroInfo(int id, const std::string& info, char activo);
     bool obtenerInfoPorId(int id, std::string& info);
     int generarNuevoId();
 
 public:
     // CONSTRUCTOR
-    ArbolBinarioArreglo(int tam,
-                        const std::string& archA,
-                        const std::string& archI);
+    ArbolBinarioArreglo(int tam, const std::string& archA, const std::string& archI);
 
     // CRUD
     bool insertar(const T& clave, const std::string& infoAsociada);
@@ -64,7 +62,6 @@ public:
     ~ArbolBinarioArreglo();
 };
 
-// IMPORTANTE PARA TEMPLATES
 #include "ARBOL_BINARIO_ARREGLO.cpp"
 
 #endif

@@ -75,6 +75,65 @@ int ArbolBinarioArreglo<T>::buscarPosLibre() const
     return 0;
 }
 
+// ===================== MANEJO DE ARCHIVO INFO (INTERNO) =====================
+
+template <typename T>
+bool ArbolBinarioArreglo<T>::leerLineasInfo(std::string*& lines, int& n)
+{
+    ifstream in(arch_info.c_str());
+    if (!in) return false;
+
+    string linea;
+    n = 0;
+    while (getline(in, linea)) n++;
+    in.close();
+
+    if (n == 0) return false;
+
+    lines = new string[n];
+    ifstream in2(arch_info.c_str());
+    for (int i = 0; i < n; i++) getline(in2, lines[i]);
+    in2.close();
+    return true;
+}
+
+template <typename T>
+bool ArbolBinarioArreglo<T>::actualizarRegistroInfo(int id,
+                                                    const std::string& info,
+                                                    char activo)
+{
+    std::string* lines = nullptr;
+    int n = 0;
+    if (!leerLineasInfo(lines, n)) return false;
+
+    bool ok = false;
+    for (int i = 0; i < n; i++) {
+        stringstream ss(lines[i]);
+        int file_id;
+        char sep1, activoPrev, sep2;
+        ss >> file_id >> sep1 >> activoPrev >> sep2;
+        if (file_id == id) {
+            stringstream nueva;
+            nueva << file_id << "|" << activo << "|" << info;
+            lines[i] = nueva.str();
+            ok = true;
+            break;
+        }
+    }
+
+    if (ok) {
+        ofstream out(arch_info.c_str(), ios::trunc);
+        if (!out) ok = false;
+        else {
+            for (int i = 0; i < n; i++)
+                out << lines[i] << "\n";
+        }
+    }
+
+    delete[] lines;
+    return ok;
+}
+
 // ===================== OBTENER INFO POR ID (INTERNO) =====================
 
 template <typename T>
@@ -192,52 +251,7 @@ bool ArbolBinarioArreglo<T>::modificar(const T& clave,
     int pos = buscar_nodo(clave, &padre);
     if (pos == 0) return false;
 
-    int id = arbol[pos].id_info;
-
-    ifstream in(arch_info.c_str());
-    if (!in) return false;
-
-    string linea;
-    int n = 0;
-    while (getline(in, linea)) n++;
-    in.close();
-
-    if (n == 0) return false;
-
-    string* lines = new string[n];
-    ifstream in2(arch_info.c_str());
-    for (int i = 0; i < n; i++) getline(in2, lines[i]);
-    in2.close();
-
-    bool ok = false;
-    for (int i = 0; i < n; i++) {
-        stringstream ss(lines[i]);
-        int file_id;
-        char sep1, activo, sep2;
-        ss >> file_id >> sep1 >> activo >> sep2;
-        string resto;
-        getline(ss, resto);
-
-        if (file_id == id) {
-            stringstream nueva;
-            nueva << file_id << "|1|" << nuevaInfo;
-            lines[i] = nueva.str();
-            ok = true;
-            break;
-        }
-    }
-
-    if (!ok) {
-        delete[] lines;
-        return false;
-    }
-
-    ofstream out(arch_info.c_str(), ios::trunc);
-    for (int i = 0; i < n; i++)
-        out << lines[i] << "\n";
-
-    delete[] lines;
-    return true;
+    return actualizarRegistroInfo(arbol[pos].id_info, nuevaInfo, '1');
 }
 
 // ===================== ELIMINAR =====================
@@ -258,42 +272,8 @@ bool ArbolBinarioArreglo<T>::eliminar(const T& clave,
     // Obtener info antes de marcar borrado
     obtenerInfoPorId(id, infoEliminada);
 
-    ifstream in(arch_info.c_str());
-    if (!in) return false;
-
-    string linea;
-    int n = 0;
-    while (getline(in, linea)) n++;
-    in.close();
-
-    if (n == 0) return false;
-
-    string* lines = new string[n];
-    ifstream in2(arch_info.c_str());
-    for (int i = 0; i < n; i++) getline(in2, lines[i]);
-    in2.close();
-
-    for (int i = 0; i < n; i++) {
-        stringstream ss(lines[i]);
-        int file_id;
-        char sep1, activo, sep2;
-        ss >> file_id >> sep1 >> activo >> sep2;
-        string resto;
-        getline(ss, resto);
-
-        if (file_id == id) {
-            stringstream nueva;
-            nueva << file_id << "|0|" << resto;
-            lines[i] = nueva.str();
-            break;
-        }
-    }
-
-    ofstream out(arch_info.c_str(), ios::trunc);
-    for (int i = 0; i < n; i++)
-        out << lines[i] << "\n";
-
-    delete[] lines;
+    if (!actualizarRegistroInfo(id, infoEliminada, '0'))
+        return false;
 
     // CASOS DE ELIMINACION EN EL ARBOL
 
