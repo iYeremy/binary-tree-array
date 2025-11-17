@@ -28,9 +28,9 @@ private:
     int capacidad;       
     int raiz;            
 
-    cola* listInorden;
-    cola* listPreorden;
-    cola* listPosorden;
+    Cola<ParRecorrido<T>>* listInorden;
+    Cola<ParRecorrido<T>>* listPreorden;
+    Cola<ParRecorrido<T>>* listPosorden;
 
     std::string arch_arbol;
     std::string arch_info;
