@@ -14,6 +14,13 @@ struct nodo {
 };
 
 template <typename T>
+struct ParRecorrido {
+    T clave;
+    int id_info;
+};
+
+
+template <typename T>
 class ArbolBinarioArreglo {
 
 private:
