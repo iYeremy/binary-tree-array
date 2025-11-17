@@ -30,6 +30,11 @@ private:
     std::string arch_arbol;
     std::string arch_info;
 
+
+    int buscar_nodo(const T& clave, int* padre);
+    bool obtenerInfoPorId(int id, std::string& info);
+    int generarNuevoId();
+    
 public:
     // CONSTRUCTOR
     ArbolBinarioArreglo(int tam,
