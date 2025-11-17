@@ -36,6 +36,7 @@ ArbolBinarioArreglo<T>::ArbolBinarioArreglo(int tam,
         arbol[i].der = 0;
     }
 
+    arbol[0].der = buscarPosLibre();
     cargarArbol(); // reconstruye si ya hay archivo
 }
 
@@ -60,6 +61,17 @@ int ArbolBinarioArreglo<T>::buscar_nodo(const T& clave, int* padre)
     }
 
     *padre = q;
+    return 0;
+}
+
+// ===================== BUSCAR PRIMERA POS. LIBRE =====================
+
+template <typename T>
+int ArbolBinarioArreglo<T>::buscarPosLibre() const
+{
+    for (int i = 1; i <= capacidad; i++) {
+        if (!arbol[i].usado) return i;
+    }
     return 0;
 }
 
@@ -122,12 +134,10 @@ bool ArbolBinarioArreglo<T>::insertar(const T& clave,
     int pos = buscar_nodo(clave, &padre);
     if (pos != 0) return false; // ya existe
 
-    int nuevo = 0;
-    for (int i = 1; i <= capacidad; i++) {
-        if (!arbol[i].usado) {
-            nuevo = i;
-            break;
-        }
+    int nuevo = arbol[0].der;
+    if (nuevo == 0 || arbol[nuevo].usado) {
+        nuevo = buscarPosLibre();
+        arbol[0].der = nuevo;
     }
     if (nuevo == 0) return false; // arreglo lleno
 
@@ -153,6 +163,7 @@ bool ArbolBinarioArreglo<T>::insertar(const T& clave,
             arbol[padre].der = nuevo;
     }
 
+    arbol[0].der = buscarPosLibre();
     guardarArbol();
     return true;
 }
@@ -322,9 +333,12 @@ bool ArbolBinarioArreglo<T>::eliminar(const T& clave,
     }
 
     arbol[pos].usado = false;
+    arbol[pos].clave = T();
+    arbol[pos].id_info = 0;
     arbol[pos].izq = 0;
     arbol[pos].der = 0;
 
+    arbol[0].der = buscarPosLibre();
     guardarArbol();
     return true;
 }
@@ -494,6 +508,7 @@ void ArbolBinarioArreglo<T>::cargarArbol()
     }
 
     raiz = arbol[0].izq;
+    arbol[0].der = buscarPosLibre();
 }
 
 // ===================== DESTRUCTOR =====================

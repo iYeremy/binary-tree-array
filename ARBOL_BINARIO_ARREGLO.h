@@ -16,7 +16,7 @@ struct nodo {
 template <typename T>
 struct ParRecorrido {
     T clave;
-    int id_info;
+    std::string info;
 };
 
 template <typename T>
@@ -32,9 +32,10 @@ private:
 
 
     int buscar_nodo(const T& clave, int* padre);
+    int buscarPosLibre() const;
     bool obtenerInfoPorId(int id, std::string& info);
     int generarNuevoId();
-    
+
 public:
     // CONSTRUCTOR
     ArbolBinarioArreglo(int tam,

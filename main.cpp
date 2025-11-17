@@ -4,42 +4,33 @@
 
 using namespace std;
 
-void imprimirCola(Cola<ParRecorrido<string>>* c)
+bool convertirCodigo(const string& entrada, long long& codigo)
 {
-    while (!c->ColaVacia()) {
-        ParRecorrido<string> p = c->AtenderCola();
+    if (entrada.empty()) return false;
+    codigo = 0;
+    for (size_t i = 0; i < entrada.size(); ++i) {
+        char c = entrada[i];
+        if (c < '0' || c > '9') return false;
+        codigo = (codigo * 10) + (c - '0');
+    }
+    return true;
+}
+
+void imprimirCola(Cola<ParRecorrido<long long>>* c)
+{
+    while (c && !c->ColaVacia()) {
+        ParRecorrido<long long> p = c->AtenderCola();
         cout << "Clave: " << p.clave
              << " | Info: " << p.info << "\n";
     }
+
+    delete c;
 }
 
-int main() 
+void mostrarRecorridos(const string& titulo,
+                       ArbolBinarioArreglo<long long>& arbol)
 {
-    ArbolBinarioArreglo<string> arbol(
-        20,              // capacidad del árbol
-        "arbol.txt",     // archivo del árbol
-        "info.txt"       // archivo con info asociada
-    );
-
-    cout << "\n==== INSERTAR CLAVES ====\n";
-    while (true) {
-        string clave;
-        cout << "\nIngrese clave (o 'fin'): ";
-        cin >> clave;
-        if (clave == "fin") break;
-
-        cin.ignore();
-        string info;
-        cout << "Ingrese informacion asociada: ";
-        getline(cin, info);
-
-        if (arbol.insertar(clave, info))
-            cout << "Insertado correctamente.\n";
-        else
-            cout << "No se pudo insertar (duplicado o árbol lleno).\n";
-    }
-
-    cout << "\n==== RECORRIDOS INICIALES ====\n";
+    cout << "\n==== " << titulo << " ====\n";
 
     cout << "\nInorden:\n";
     imprimirCola(arbol.inorden());
@@ -52,65 +43,175 @@ int main()
 
     cout << "\nPor niveles:\n";
     imprimirCola(arbol.niveles());
+}
 
-    // ==============================
-    // === MENU DE BUSCAR/ELIMINAR ==
-    // ==============================
+int main() 
+{
+    ArbolBinarioArreglo<long long> arbol(
+        20,              // capacidad del árbol
+        "arbol.txt",     // archivo del árbol
+        "info.txt"       // archivo con info asociada
+    );
 
+    cout << "\n==== REGISTRO INICIAL ====\n";
     while (true) {
-        cout << "\n===== MENU =====\n";
-        cout << "1. Buscar\n";
-        cout << "2. Eliminar\n";
-        cout << "3. Salir del menu\n";
+        string codigoTxt;
+        cout << "\nIngrese codigo (o 'fin' para terminar): ";
+        cin >> codigoTxt;
+        if (codigoTxt == "fin") {
+            cin.ignore(10000, '\n');
+            break;
+        }
+
+        long long codigo;
+        if (!convertirCodigo(codigoTxt, codigo)) {
+            cin.ignore(10000, '\n');
+            cout << "Codigo invalido. Solo digitos.\n";
+            continue;
+        }
+
+        cin.ignore(10000, '\n');
+        string nombre;
+        cout << "Ingrese nombre: ";
+        getline(cin, nombre);
+
+        string apellido;
+        cout << "Ingrese apellido: ";
+        getline(cin, apellido);
+
+        string info = "Nombre: " + nombre + " | Apellido: " + apellido;
+
+        if (arbol.insertar(codigo, info))
+            cout << "Insertado correctamente.\n";
+        else
+            cout << "No se pudo insertar (codigo duplicado o arbol lleno).\n";
+    }
+
+    mostrarRecorridos("RECORRIDOS INICIALES", arbol);
+
+    // ==============================
+    // === MENU PRINCIPAL ===========
+    // ==============================
+
+    bool salir = false;
+    while (!salir) {
+        cout << "\n===== MENU PRINCIPAL =====\n";
+        cout << "1. Buscar por codigo\n";
+        cout << "2. Modificar informacion\n";
+        cout << "3. Eliminar registro\n";
+        cout << "4. Insertar nuevo registro\n";
+        cout << "5. Mostrar recorridos\n";
+        cout << "6. Salir\n";
         cout << "Seleccione opcion: ";
 
         int op;
-        cin >> op;
+        if (!(cin >> op)) {
+            cin.clear();
+            cin.ignore(10000, '\n');
+            cout << "Entrada invalida. Intente nuevamente.\n";
+            continue;
+        }
+        cin.ignore(10000, '\n');
 
         if (op == 1) {
-            string clave;
-            cout << "Clave a buscar: ";
-            cin >> clave;
+            string codigoTxt;
+            cout << "Codigo a buscar: ";
+            cin >> codigoTxt;
+            cin.ignore(10000, '\n');
+
+            long long codigo;
+            if (!convertirCodigo(codigoTxt, codigo)) {
+                cout << "Codigo invalido.\n";
+                continue;
+            }
 
             string info;
-            if (arbol.buscar(clave, info))
+            if (arbol.buscar(codigo, info))
                 cout << "ENCONTRADO: " << info << "\n";
             else
-                cout << "No existe esa clave.\n";
+                cout << "No existe ese codigo.\n";
         }
         else if (op == 2) {
-            string clave;
-            cout << "Clave a eliminar: ";
-            cin >> clave;
+            string codigoTxt;
+            cout << "Codigo a modificar: ";
+            cin >> codigoTxt;
+            cin.ignore(10000, '\n');
 
-            string infoEliminada;
-            if (arbol.eliminar(clave, infoEliminada))
-                cout << "Eliminado. Info asociada:\n" << infoEliminada << "\n";
+            long long codigo;
+            if (!convertirCodigo(codigoTxt, codigo)) {
+                cout << "Codigo invalido.\n";
+                continue;
+            }
+
+            string nombre, apellido;
+            cout << "Nuevo nombre: ";
+            getline(cin, nombre);
+            cout << "Nuevo apellido: ";
+            getline(cin, apellido);
+
+            string nuevaInfo = "Nombre: " + nombre + " | Apellido: " + apellido;
+
+            if (arbol.modificar(codigo, nuevaInfo))
+                cout << "Informacion actualizada correctamente.\n";
             else
-                cout << "No existe esa clave.\n";
+                cout << "No se pudo modificar: codigo inexistente.\n";
         }
         else if (op == 3) {
-            break;
+            string codigoTxt;
+            cout << "Codigo a eliminar: ";
+            cin >> codigoTxt;
+            cin.ignore(10000, '\n');
+
+            long long codigo;
+            if (!convertirCodigo(codigoTxt, codigo)) {
+                cout << "Codigo invalido.\n";
+                continue;
+            }
+
+            string infoEliminada;
+            if (arbol.eliminar(codigo, infoEliminada))
+                cout << "Eliminado. Info asociada:\n" << infoEliminada << "\n";
+            else
+                cout << "No existe ese codigo.\n";
+        }
+        else if (op == 4) {
+            string codigoTxt;
+            cout << "Ingrese codigo: ";
+            cin >> codigoTxt;
+            cin.ignore(10000, '\n');
+
+            long long codigo;
+            if (!convertirCodigo(codigoTxt, codigo)) {
+                cout << "Codigo invalido.\n";
+                continue;
+            }
+
+            string nombre, apellido;
+            cout << "Ingrese nombre: ";
+            getline(cin, nombre);
+            cout << "Ingrese apellido: ";
+            getline(cin, apellido);
+
+            string info = "Nombre: " + nombre + " | Apellido: " + apellido;
+
+            if (arbol.insertar(codigo, info))
+                cout << "Insertado correctamente.\n";
+            else
+                cout << "No se pudo insertar (codigo duplicado o arbol lleno).\n";
+        }
+        else if (op == 5) {
+            mostrarRecorridos("RECORRIDOS ACTUALES", arbol);
+        }
+        else if (op == 6) {
+            salir = true;
         }
         else {
             cout << "Opcion invalida.\n";
         }
     }
 
-    cout << "\n==== RECORRIDOS FINALES ====\n";
+    mostrarRecorridos("RECORRIDOS FINALES", arbol);
 
-    cout << "\nInorden:\n";
-    imprimirCola(arbol.inorden());
-
-    cout << "\nPreorden:\n";
-    imprimirCola(arbol.preorden());
-
-    cout << "\nPosorden:\n";
-    imprimirCola(arbol.posorden());
-
-    cout << "\nPor niveles:\n";
-    imprimirCola(arbol.niveles());
-
-    cout << "\nPrograma finalizado. Se guardó el árbol.\n";
+    cout << "\nPrograma finalizado. Se guardo el arbol.\n";
     return 0;
 }

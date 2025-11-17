@@ -1,0 +1,6 @@
+1|1|Nombre: adasd | Apellido: dsfsdf
+2|0|Nombre: fdgfhfg | Apellido: vcbb
+3|0|Nombre: fgfdgdf | Apellido: bnvbnv
+4|0|Nombre: bdffdnb | Apellido: hgjghjhg
+5|1|Nombre: fdhfghgf | Apellido: bnbvnm
+6|1|Nombre: mhgmghm | Apellido: yutyu
