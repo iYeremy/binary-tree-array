@@ -5,26 +5,26 @@
 #include "cola1.h"
 
 template <class T>
-struct nodo{
+struct nodo {
     T clave;
+    int id_info;
     int izq;
     int der;
     bool usado;
 };
+
 template <typename T>
 class ArbolBinarioArreglo {
 
 private:
-    nodoA<T>* arbol;
-    int capacidad;
-    int raiz;
+    nodo<T>* arbol;      
+    int capacidad;       
+    int raiz;            
 
-    // recorridos usando cola1.h
     cola* listInorden;
     cola* listPreorden;
     cola* listPosorden;
 
-    // archivos
     std::string arch_arbol;
     std::string arch_info;
 
@@ -33,18 +33,21 @@ public:
                         const std::string& archA,
                         const std::string& archI);
 
-    void insertar(const T& clave);         // igual al profe (void insertar)
-    int buscarpadre(const T& clave,int pos);
-    void eliminar(const T& clave);         // igual al profe (void eliminar)
-    int buscar_nodo(const T& clave,int* p);
-    int getraiz(){ return arbol[0].izq; }  // igualito al profe
+    void insertar(const T& clave);
+    int buscarpadre(const T& clave, int pos);
+    void eliminar(const T& clave);
+    int buscar_nodo(const T& clave, int* padre);
+    bool modificar(const T& clave, const std::string& nuevaInfo);
+
+    int getraiz() { return arbol[0].izq; }
 
     void inorden(int inicio);
     void preorden(int inicio);
     void posorden(int inicio);
 
     bool Borrarnodo(const T& clave);
-    ~ArbolBinarioArreglo(){ delete arbol; }
+
+    ~ArbolBinarioArreglo() { delete[] arbol; }
 };
 
 #endif
