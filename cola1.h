@@ -1,62 +1,56 @@
 #include <cstdlib>
 #include <iostream>
-#include "estructura1.h"
 
 #ifndef COLA1_H     
 #define COLA1_H 
 
 using namespace std;
 
-class cola{nodo *cab,*fin;
-      public: cola(){cab=fin=NULL;}
-      void InsCola(char i);
-      char AtenderCola();
-      void ImprimirCola();
-      bool ColaVacia();
-      ~cola();
- };
+template <typename D>
+struct NodoCola {
+    D dato;
+    NodoCola* sig;
+};
 
-void cola::InsCola(char i){
-     nodo *nuevo;
-     nuevo= new nodo;
-     nuevo->dato=i;
-     nuevo->sig= NULL;
-     if (cab==NULL)
-         {cab=nuevo;}
-     else {fin->sig = nuevo;}
-     fin=nuevo;
-}
+template <typename D>
+class Cola {
+    NodoCola<D>* cab;
+    NodoCola<D>* fin;
 
+public:
+    Cola() { cab = fin = nullptr; }
 
+    void InsCola(D x) {
+        NodoCola<D>* nuevo = new NodoCola<D>;
+        nuevo->dato = x;
+        nuevo->sig = nullptr;
 
-char cola::AtenderCola()
-{   char x;
-    nodo *aux = cab; 
-    cab=aux->sig;
-    x=aux->dato;
-    delete aux;
-    return x;
+        if (cab == nullptr) cab = nuevo;
+        else fin->sig = nuevo;
+
+        fin = nuevo;
     }
 
-void cola::ImprimirCola(){
-     nodo *aux;
-     aux=cab;
-     while(aux!=NULL){
-       cout<<aux->dato<<" ";
-       aux=aux->sig;}    
-}
+    D AtenderCola() {
+        NodoCola<D>* aux = cab;
+        D valor = aux->dato;
+        cab = aux->sig;
+        delete aux;
+        return valor;
+    }
 
-bool cola::ColaVacia(){
-     return (cab==NULL);
-     }
+    bool ColaVacia() {
+        return cab == nullptr;
+    }
 
-cola::~cola(){
-     nodo *aux;
-     while(cab!=NULL)
-       {aux= cab;
-        cab=aux->sig;
-        delete aux;}
-     delete cab;
-     }
+    ~Cola() {
+        while (cab != nullptr) {
+            NodoCola<D>* aux = cab;
+            cab = cab->sig;
+            delete aux;
+        }
+    }
+};
+
 
 #endif
